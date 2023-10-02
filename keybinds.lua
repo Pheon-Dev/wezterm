@@ -29,75 +29,77 @@ local direction_keys = {
   LeftArrow = "Left",
   RightArrow = "Right",
 }
-local function split_nav(resize_or_move, key)
-  local mods = resize_or_move == "resize" and "ALT" or "CTRL"
+
+M.key_tables = function()
   return {
-    key = key,
-    mods = mods,
-    action = wezterm.action_callback(function(win, pane)
-      local vim = is_vim(pane)
+    resize_pane = {
+      { key = 'h',      action = act.AdjustPaneSize { 'Left', 1 } },
+      { key = 'l',      action = act.AdjustPaneSize { 'Right', 1 } },
+      { key = 'k',      action = act.AdjustPaneSize { 'Up', 1 } },
+      { key = 'j',      action = act.AdjustPaneSize { 'Down', 1 } },
 
-      local matches = {
-        zellij = true,
-        rx = true,
-      }
+      { key = 'Escape', action = 'PopKeyTable' },
 
-      local exe = basename(pane:get_foreground_process_info().executable)
-      if vim or matches[exe] then
-        win:perform_action({
-          SendKey = { key = key, mods = mods },
-        }, pane)
-        return
-      end
-
-      if resize_or_move == "resize" then
-        win:perform_action({ AdjustPaneSize = { direction_keys[key], 3 } }, pane)
-      else
-        win:perform_action({ ActivatePaneDirection = direction_keys[key] }, pane)
-      end
-    end),
+    },
+    -- move_pane = {
+    --   { key = 'h',      action = act.AcitvatePaneDirection { 'Left' } },
+    --   { key = 'l',      action = act.AcitvatePaneDirection { 'Right' } },
+    --   { key = 'k',      action = act.AcitvatePaneDirection { 'Up' } },
+    --   { key = 'j',      action = act.AcitvatePaneDirection { 'Down' } },
+    --
+    --   { key = 'Escape', action = 'PopKeyTable' },
+    --
+    -- },
   }
 end
 
 M.keys = function()
   return {
-    -- split_nav("move", "h"),
-    -- split_nav("move", "j"),
-    -- split_nav("move", "k"),
-    -- split_nav("move", "l"),
-    -- split_nav("resize", "h"),
-    -- -- split_nav("resize", "j"),
-    -- -- split_nav("resize", "k"),
-    -- split_nav("resize", "l"),
-    -- split_nav("move", "LeftArrow"),
-    -- split_nav("move", "DownArrow"),
-    -- split_nav("move", "UpArrow"),
-    -- split_nav("move", "RightArrow"),
-    -- split_nav("resize", "LeftArrow"),
-    -- split_nav("resize", "RightArrow"),
-    -- split_nav("resize", "DownArrow"),
-    -- split_nav("resize", "UpArrow"),
+    {
+      key = 'r',
+      mods = 'LEADER',
+      action = act.ActivateKeyTable {
+        name = 'resize_pane',
+        one_shot = false,
+      },
+    },
     -- {
-    -- 	key = "\\",
-    -- 	mods = "CTRL",
-    -- 	action = act.DisableDefaultAssignment,
+    --   key = 'm',
+    --   mods = 'LEADER',
+    --   action = act.ActivateKeyTable {
+    --     name = 'move_pane',
+    --     one_shot = false,
+    --   },
     -- },
-    -- { key = '1', mods = 'CTRL', action = act.ActivatePaneByIndex(1) },
+    {
+      key = 'q',
+      mods = 'ALT',
+      action = wezterm.action.CloseCurrentPane { confirm = true },
+    },
+
     {
       key = "n",
-      mods = "CTRL",
+      mods = "ALT",
       action = act.ActivateTabRelative(-1),
     },
     {
-      key = "p",
-      mods = "CTRL",
+      key = "m",
+      mods = "ALT",
       action = act.ActivateTabRelative(1),
     },
     {
-      key = "x",
-      mods = "SUPER",
+      key = "Q",
+      mods = "ALT|SHIFT",
       action = act.CloseCurrentTab({ confirm = true }),
     },
+    {
+      key = 'z',
+      mods = 'ALT',
+      action = wezterm.action.ToggleFullScreen,
+    },
+    -- { key = 'p', mods = 'ALT', action = wezterm.action.ShowTabNavigator },
+    { key = 'p', mods = 'ALT', action = wezterm.action.ShowLauncher },
+    { key = 'w', mods = 'ALT', action = wezterm.action.SpawnWindow },
     {
       key = ",",
       mods = "ALT",
@@ -133,6 +135,61 @@ M.keys = function()
       mods = 'ALT',
       action = act.ActivatePaneDirection 'Down',
     },
+    -- Switch to the default workspace
+    {
+      key = 'y',
+      mods = 'CTRL|SHIFT',
+      action = act.SwitchToWorkspace {
+        name = 'default',
+      },
+    },
+    -- {
+    --   key = 'u',
+    --   mods = 'CTRL|SHIFT',
+    --   action = act.SwitchToWorkspace {
+    --     name = 'monitoring',
+    --     spawn = {
+    --       args = { 'top' },
+    --     },
+    --   },
+    -- },
+    -- Create a new workspace with a random name and switch to it
+    { key = 'o', mods = 'ALT', action = act.SwitchToWorkspace },
+    { key = ']', mods = 'ALT', action = act.SwitchToWorkspace },
+    -- Show the launcher in fuzzy selection mode and have it list all workspaces
+    -- and allow activating one.
+    {
+      key = 'f',
+      mods = 'ALT',
+      action = act.ShowLauncherArgs {
+        flags = 'FUZZY|WORKSPACES',
+      },
+    },
+    {
+      key = 's',
+      mods = 'ALT',
+      action = act.PromptInputLine {
+        description = wezterm.format {
+          { Attribute = { Intensity = 'Bold' } },
+          { Foreground = { AnsiColor = 'Fuchsia' } },
+          { Text = 'Enter name for new workspace' },
+        },
+        action = wezterm.action_callback(function(window, pane, line)
+          -- line will be `nil` if they hit escape without entering anything
+          -- An empty string if they just hit enter
+          -- Or the actual line of text they wrote
+          if line then
+            window:perform_action(
+              act.SwitchToWorkspace {
+                name = line,
+              },
+              pane
+            )
+          end
+        end),
+      },
+    },
+
   }
 end
 

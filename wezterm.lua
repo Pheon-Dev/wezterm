@@ -1,4 +1,5 @@
 local wezterm = require 'wezterm'
+local act = wezterm.action
 local config = {}
 
 if wezterm.config_builder then
@@ -22,40 +23,35 @@ config.color_schemes = {
 
 config.color_scheme = "Catppuccin Theme"
 
+config.enable_wayland = true
+config.hide_mouse_cursor_when_typing = true
 config.animation_fps = 30
 config.max_fps = 60
 config.font = wezterm.font_with_fallback({
-  -- "ComicMonoNF",
-  -- "FiraMono Nerd Font",
-  -- "JetBrainsMono Nerd Font",
+  "JetBrainsMono Nerd Font",
   "Iosevka Nerd Font",
-  -- "Bruh-Font",
+  "ComicMonoNF",
+  "FiraMono Nerd Font",
 })
 config.underline_thickness = 1
 config.underline_position = -2.0
 
--- config.allow_square_glyphs_to_overflow_width = "Always"
-config.allow_square_glyphs_to_overflow_width = "Never"
+config.allow_square_glyphs_to_overflow_width = "Never" -- "Always"
 
 -- config.default_prog = { "sesh", "attach", "tab", "--create" }
 
-config.font_size = 11.0
-
-config.enable_tab_bar = true
-config.use_fancy_tab_bar = false
-config.tab_bar_at_bottom = true
-config.tab_max_width = 50
+config.font_size = 10.0
+config.line_height = 0.9
 config.automatically_reload_config = true
-config.hide_tab_bar_if_only_one_tab = false
 
 config.window_frame = {
   font = wezterm.font({ family = "Iosevka Nerd Font", weight = "Bold" }),
-  font_size = 12.0,
+  font_size = 10.0,
   border_left_width = "0.0cell",
   border_right_width = "0.0cell",
-  border_bottom_height = "0.10cell",
-  border_bottom_color = "#1e1e2e",
+  border_bottom_height = "0.0cell",
   border_top_height = "0.0cell",
+  border_bottom_color = "#1e1e2e",
 }
 
 config.inactive_pane_hsb = {
@@ -66,18 +62,67 @@ config.inactive_pane_hsb = {
 config.window_decorations = "RESIZE"
 
 config.window_padding = {
-  top = 1,
-  bottom = 1,
-  left = 1,
-  right = 1,
+  left = '1cell',
+  right = '1cell',
+  top = '0.1cell',
+  bottom = '0.1cell',
 }
 
+-- KEYBINDS
 config.bypass_mouse_reporting_modifiers = "SHIFT"
-config.disable_default_key_bindings = false
-config.leader = { key = "w", mods = "CTRL", timeout_milliseconds = 1000 }
+config.disable_default_key_bindings = true
+config.leader = { key = "Space", mods = "CTRL" }
 
 config.keys = require("keybinds").keys()
+config.key_tables = require("keybinds").key_tables()
+
+for i = 1, 8 do
+  -- CTRL+ALT + number to activate that tab
+  table.insert(config.keys, {
+    key = tostring(i),
+    mods = 'ALT',
+    action = act.ActivateTab(i - 1),
+  })
+  -- -- F1 through F8 to activate that tab
+  -- table.insert(config.keys, {
+  --   key = 'F' .. tostring(i),
+  --   action = act.ActivateTab(i - 1),
+  -- })
+end
+
+-- TAB BAR
+config.enable_tab_bar = true
+config.use_fancy_tab_bar = false
+config.tab_bar_at_bottom = true
+config.show_tabs_in_tab_bar = true
+config.tab_max_width = 50
+config.show_new_tab_button_in_tab_bar = false
+config.hide_tab_bar_if_only_one_tab = false
 
 require("tab-bar")
 
+config.launch_menu = {
+  {
+    args = { 'f' },
+  },
+  {
+    -- Optional label to show in the launcher. If omitted, a label
+    -- is derived from the `args`
+    label = 'Bash',
+    -- The argument array to spawn.  If omitted the default program
+    -- will be used as described in the documentation above
+    args = { 'bash', '-l' },
+
+    -- You can specify an alternative current working directory;
+    -- if you don't specify one then a default based on the OSC 7
+    -- escape sequence will be used (see the Shell Integration
+    -- docs), falling back to the home directory.
+    -- cwd = "/some/path"
+
+    -- You can override environment variables just for this command
+    -- by setting this here.  It has the same semantics as the main
+    -- set_environment_variables configuration option described above
+    -- set_environment_variables = { FOO = "bar" },
+  },
+}
 return config

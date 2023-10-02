@@ -1,5 +1,6 @@
 local wezterm = require 'wezterm'
 local nf = wezterm.nerdfonts
+
 local palette = {
   turquoise = "#5de4c7",
   tiffany_blue = "#85e2da",
@@ -40,6 +41,7 @@ local palette = {
   ---------------------
   text = "#e4f0fb",
 }
+
 local function exists(file)
   local f = io.open(file)
   return f and io.close(f)
@@ -58,6 +60,7 @@ local function gitcheck(dir)
   end
   return #dir > 0 and dir or dir
 end
+
 local function get_git_root(dir, truncate_base)
   local gc = gitcheck(dir)
   if not gc then
@@ -77,7 +80,9 @@ local function get_git_root(dir, truncate_base)
     return dir:gsub(base, "")
   end
 end
+
 local entries_cache = {}
+
 local function find(list, item)
   for i, v in ipairs(list) do
     if type(item) == "function" then
@@ -92,6 +97,7 @@ local function find(list, item)
   end
   return nil
 end
+
 local function make_right_status(window, pane)
   local pwd = ""
   if pane ~= nil then
@@ -175,6 +181,7 @@ local function make_right_status(window, pane)
   window:set_right_status(wezterm.format({
     { Attribute = { Intensity = "Bold" } },
     { Foreground = { Color = "#9196c2" } },
+    { Text = window:active_workspace() },
     {
       Text = (function()
         local name = pane:get_user_vars().sesh_name
@@ -185,7 +192,7 @@ local function make_right_status(window, pane)
         end
       end)(),
     },
-    { Text = wezterm.strftime("%H:%M    %A, %d %B %Y") },
+    -- { Text = wezterm.strftime("%H:%M    %A, %d %B %Y") },
     { Foreground = { Color = icon_col } },
     { Text = icon_txt or "" },
     { Text = " " },
