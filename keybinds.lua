@@ -41,6 +41,22 @@ M.key_tables = function()
       { key = 'Escape', action = 'PopKeyTable' },
 
     },
+    switch_tabs = {
+      { key = 'h',      action = act.ActivateTabRelative(-1) },
+      { key = 'l',      action = act.ActivateTabRelative(1) },
+
+      { key = 'Escape', action = 'PopKeyTable' },
+
+    },
+    switch_panes = {
+      { key = 'h',      action = act.ActivatePaneDirection "Left" },
+      { key = 'j',      action = act.ActivatePaneDirection "Down" },
+      { key = 'k',      action = act.ActivatePaneDirection "Up" },
+      { key = 'l',      action = act.ActivatePaneDirection "Right" },
+
+      { key = 'Escape', action = 'PopKeyTable' },
+
+    },
     -- move_pane = {
     --   { key = 'h',      action = act.AcitvatePaneDirection { 'Left' } },
     --   { key = 'l',      action = act.AcitvatePaneDirection { 'Right' } },
@@ -63,6 +79,24 @@ M.keys = function()
         one_shot = false,
       },
     },
+    {
+      key = 'p',
+      mods = 'LEADER',
+      action = act.ActivateKeyTable {
+        name = 'switch_panes',
+        one_shot = false,
+      },
+    },
+    {
+      key = 't',
+      mods = 'LEADER',
+      action = act.ActivateKeyTable {
+        name = 'switch_tabs',
+        one_shot = false,
+      },
+    },
+    { key = 'Tab', mods = 'ALT',       action = act.ActivateTabRelative(1) },
+    { key = 'Tab', mods = 'ALT|SHIFT', action = act.ActivateTabRelative(-1) },
     -- {
     --   key = 'm',
     --   mods = 'LEADER',
@@ -76,17 +110,6 @@ M.keys = function()
       mods = 'ALT',
       action = wezterm.action.CloseCurrentPane { confirm = true },
     },
-
-    {
-      key = "n",
-      mods = "ALT",
-      action = act.ActivateTabRelative(-1),
-    },
-    {
-      key = "m",
-      mods = "ALT",
-      action = act.ActivateTabRelative(1),
-    },
     {
       key = "Q",
       mods = "ALT|SHIFT",
@@ -95,13 +118,16 @@ M.keys = function()
     {
       key = 'z',
       mods = 'ALT',
-      action = wezterm.action.ToggleFullScreen,
+      -- action = wezterm.action.ToggleFullScreen,
+      action = wezterm.action.TogglePaneZoomState,
     },
-    -- { key = 'p', mods = 'ALT', action = wezterm.action.ShowTabNavigator },
-    { key = 'p', mods = 'ALT', action = wezterm.action.ShowLauncher },
-    { key = 'w', mods = 'ALT', action = wezterm.action.SpawnWindow },
+    { key = '-', mods = 'CTRL', action = wezterm.action.DecreaseFontSize },
+    { key = '=', mods = 'CTRL', action = wezterm.action.IncreaseFontSize },
+    { key = 't', mods = 'ALT',  action = wezterm.action.ShowTabNavigator },
+    { key = 'p', mods = 'ALT',  action = wezterm.action.ShowLauncher },
+    -- { key = 'w', mods = 'ALT', action = wezterm.action.SpawnWindow },
     {
-      key = ",",
+      key = "n",
       mods = "ALT",
       action = act.SpawnTab("CurrentPaneDomain"),
     },
@@ -135,12 +161,61 @@ M.keys = function()
       mods = 'ALT',
       action = act.ActivatePaneDirection 'Down',
     },
-    -- Switch to the default workspace
+    {
+      key = 'c',
+      mods = 'CTRL|SHIFT',
+      action = wezterm.action.CopyTo 'ClipboardAndPrimarySelection',
+    },
+    { key = 'v', mods = 'CTRL|SHIFT', action = act.PasteFrom 'Clipboard' },
+    -- { key = 'V', mods = 'CTRL', action = act.PasteFrom 'PrimarySelection' },
     {
       key = 'y',
       mods = 'CTRL|SHIFT',
       action = act.SwitchToWorkspace {
         name = 'default',
+      },
+    },
+    {
+      key = 'g',
+      mods = 'ALT',
+      action = act.SpawnCommandInNewWindow {
+        label = 'btop',
+        args = { 'btop' },
+        cwd = ".",
+        -- Sets addditional environment variables in the environment for
+        -- this command invocation.
+        set_environment_variables = {
+          SOMETHING = 'a value',
+        },
+
+        -- Specifiy that the multiplexer domain of the currently active pane
+        -- should be used to start this process.  This is usually what you
+        -- want to happen and this is the default behavior if you omit
+        -- the domain.
+        domain = 'CurrentPaneDomain',
+
+        -- Specify that the default multiplexer domain be used for this
+        -- command invocation.  The default domain is typically the "local"
+        -- domain, which spawns processes locally.  However, if you started
+        -- wezterm using `wezterm connect` or `wezterm serial` then the default
+        -- domain will not be "local".
+        -- domain = 'DefaultDomain',
+
+        -- Since: 20230320-124340-559cb7b0
+        -- Specify the initial position for a GUI window when this command
+        -- is used in a context that will create a new window, such as with
+        -- wezterm.mux.spawn_window, SpawnCommandInNewWindow
+        position = {
+          x = 10,
+          y = 300,
+          -- Optional origin to use for x and y.
+          -- Possible values:
+          -- * "ScreenCoordinateSystem" (this is the default)
+          -- * "MainScreen" (the primary or main screen)
+          -- * "ActiveScreen" (whichever screen hosts the active/focused window)
+          -- * {Named="HDMI-1"} - uses a screen by name. See wezterm.gui.screens()
+          -- origin = "ScreenCoordinateSystem"
+        },
       },
     },
     -- {
@@ -153,11 +228,9 @@ M.keys = function()
     --     },
     --   },
     -- },
-    -- Create a new workspace with a random name and switch to it
-    { key = 'o', mods = 'ALT', action = act.SwitchToWorkspace },
-    { key = ']', mods = 'ALT', action = act.SwitchToWorkspace },
-    -- Show the launcher in fuzzy selection mode and have it list all workspaces
-    -- and allow activating one.
+    { key = 'w', mods = 'CTRL',       action = act.SwitchToWorkspace },
+    { key = 'w', mods = 'ALT',        action = act.SwitchWorkspaceRelative(1) },
+    { key = 'w', mods = 'ALT|SHIFT',  action = act.SwitchWorkspaceRelative(-1) },
     {
       key = 'f',
       mods = 'ALT',
@@ -193,4 +266,22 @@ M.keys = function()
   }
 end
 
+
+for i = 1, 8 do
+  table.insert(M.keys(), {
+    key = tostring(i),
+    mods = 'ALT',
+    action = act.ActivateTab(i - 1),
+  })
+  -- table.insert(M.keys(), {
+  --   key = tostring(i),
+  --   mods = 'CTRL|ALT',
+  --   action = act.ActivateWindow(i - 1),
+  -- })
+  -- -- F1 through F8 to activate that tab
+  -- table.insert(config.keys, {
+  --   key = 'F' .. tostring(i),
+  --   action = act.ActivateTab(i - 1),
+  -- })
+end
 return M

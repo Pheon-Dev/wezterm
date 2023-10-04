@@ -76,20 +76,6 @@ config.leader = { key = "Space", mods = "CTRL" }
 config.keys = require("keybinds").keys()
 config.key_tables = require("keybinds").key_tables()
 
-for i = 1, 8 do
-  -- CTRL+ALT + number to activate that tab
-  table.insert(config.keys, {
-    key = tostring(i),
-    mods = 'ALT',
-    action = act.ActivateTab(i - 1),
-  })
-  -- -- F1 through F8 to activate that tab
-  -- table.insert(config.keys, {
-  --   key = 'F' .. tostring(i),
-  --   action = act.ActivateTab(i - 1),
-  -- })
-end
-
 -- TAB BAR
 config.enable_tab_bar = true
 config.use_fancy_tab_bar = false
