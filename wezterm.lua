@@ -28,6 +28,7 @@ config.hide_mouse_cursor_when_typing = true
 config.animation_fps = 30
 config.max_fps = 60
 config.font = wezterm.font_with_fallback({
+  "Maple Mono",
   "JetBrainsMono Nerd Font",
   "Iosevka Nerd Font",
   "ComicMonoNF",
