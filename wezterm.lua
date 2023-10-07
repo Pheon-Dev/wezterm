@@ -29,10 +29,11 @@ config.animation_fps = 30
 config.max_fps = 60
 config.font = wezterm.font_with_fallback({
   "Maple Mono",
-  "JetBrainsMono Nerd Font",
-  "Iosevka Nerd Font",
-  "ComicMonoNF",
-  "FiraMono Nerd Font",
+  -- "Maple Mono SC NF",
+  -- "JetBrainsMono Nerd Font",
+  -- "Iosevka Nerd Font",
+  -- "ComicMonoNF",
+  -- "FiraMono Nerd Font",
 })
 config.underline_thickness = 1
 config.underline_position = -2.0
@@ -41,7 +42,7 @@ config.allow_square_glyphs_to_overflow_width = "Never" -- "Always"
 
 -- config.default_prog = { "sesh", "attach", "tab", "--create" }
 
-config.font_size = 10.0
+config.font_size = 11.0
 config.line_height = 0.9
 config.automatically_reload_config = true
 
