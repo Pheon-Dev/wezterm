@@ -27,27 +27,35 @@ config.enable_wayland = true
 config.hide_mouse_cursor_when_typing = true
 config.animation_fps = 30
 config.max_fps = 60
-config.font = wezterm.font_with_fallback({
+config.font = wezterm.font(
   "Maple Mono",
-  -- "Maple Mono SC NF",
-  -- "JetBrainsMono Nerd Font",
-  -- "Iosevka Nerd Font",
-  -- "ComicMonoNF",
-  -- "FiraMono Nerd Font",
-})
+  {
+    -- weight = 'Regular',
+    italic = false
+  }
+)
+
+-- config.font = wezterm.font_with_fallback({
+--   "JetBrainsMono Nerd Font",
+--   "Iosevka Nerd Font",
+--   "ComicMonoNF",
+--   -- "FiraMono Nerd Font",
+-- })
+
+config.allow_square_glyphs_to_overflow_width = "Always" -- "Never", "Always", "WhenFollowedBySpace"
 config.underline_thickness = 1
 config.underline_position = -2.0
-
-config.allow_square_glyphs_to_overflow_width = "Never" -- "Always"
+-- config.dpi = 90.0
+config.bold_brightens_ansi_colors = true
 
 -- config.default_prog = { "sesh", "attach", "tab", "--create" }
 
 config.font_size = 11.0
-config.line_height = 0.9
+-- config.line_height = 0.8
 config.automatically_reload_config = true
 
 config.window_frame = {
-  font = wezterm.font({ family = "Iosevka Nerd Font", weight = "Bold" }),
+  font = wezterm.font({ family = "Maple Mono", weight = "Bold" }),
   font_size = 10.0,
   border_left_width = "0.0cell",
   border_right_width = "0.0cell",
@@ -85,7 +93,7 @@ config.tab_bar_at_bottom = true
 config.show_tabs_in_tab_bar = true
 config.tab_max_width = 50
 config.show_new_tab_button_in_tab_bar = false
-config.hide_tab_bar_if_only_one_tab = false
+config.hide_tab_bar_if_only_one_tab = true
 
 require("tab-bar")
 
