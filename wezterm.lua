@@ -24,12 +24,22 @@ config.color_schemes = {
 config.color_scheme = "Catppuccin Theme"
 
 -- config.enable_wayland = true
+config.cursor_blink_ease_in = "Constant"
+config.cursor_blink_ease_out = "Constant"
+
+config.colors = {
+	indexed = { [241] = "#65bcff" },
+}
+
+config.underline_thickness = 1
+config.cursor_thickness = 1
+config.underline_position = -6
 config.hide_mouse_cursor_when_typing = true
 config.default_cursor_style = "BlinkingBar"
 config.force_reverse_video_cursor = true
 config.window_padding = { left = 0, right = 0, top = 0, bottom = 0 }
 -- window_background_opacity = 0.9,
--- cell_width = 0.9,
+config.cell_width = 0.8
 config.scrollback_lines = 10000
 -- config.animation_fps = 30
 -- config.max_fps = 60
@@ -49,8 +59,8 @@ config.scrollback_lines = 10000
 -- "FiraMono Nerd Font",
 -- })
 
-config.font_size = 10.8
-config.font = wezterm.font({ family = "Fira Code" })
+config.font_size = 10.5
+config.font = wezterm.font({ family = "Fira Code", weight = "Regular" })
 config.bold_brightens_ansi_colors = true
 config.font_rules = {
 	{
@@ -69,14 +79,12 @@ config.font_rules = {
 		font = wezterm.font({ family = "Maple Mono", style = "Italic" }),
 	},
 }
--- config.underline_thickness = 1
--- config.underline_position = -2.0
 -- config.dpi = 192.0
 -- config.bold_brightens_ansi_colors = true
 
 -- config.default_prog = { "sesh", "attach", "tab", "--create" }
 
-config.line_height = 0.9
+-- config.line_height = 0.9
 config.automatically_reload_config = true
 
 config.window_frame = {
@@ -110,7 +118,10 @@ config.leader = { key = "Space", mods = "CTRL" }
 
 config.keys = require("keybinds").keys()
 config.key_tables = require("keybinds").key_tables()
-
+require("tabs").setup(config)
+require("mouse").setup(config)
+require("links").setup(config)
+-- require("keys").setup(config)
 -- TAB BAR
 config.enable_tab_bar = true
 config.use_fancy_tab_bar = false
@@ -119,8 +130,9 @@ config.show_tabs_in_tab_bar = true
 config.tab_max_width = 50
 config.show_new_tab_button_in_tab_bar = true
 config.hide_tab_bar_if_only_one_tab = true
+config.audible_bell = "Disabled"
 
-require("tab-bar")
+-- require("tab-bar")
 
 config.launch_menu = {
 	{
