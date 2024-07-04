@@ -96,22 +96,22 @@ M.keys = function()
 		},
 		{
 			key = "h",
-			mods = "ALT",
+			mods = "ALT|SHIFT",
 			action = act.ActivatePaneDirection("Left"),
 		},
 		{
 			key = "l",
-			mods = "ALT",
+			mods = "ALT|SHIFT",
 			action = act.ActivatePaneDirection("Right"),
 		},
 		{
 			key = "k",
-			mods = "ALT",
+			mods = "ALT|SHIFT",
 			action = act.ActivatePaneDirection("Up"),
 		},
 		{
 			key = "j",
-			mods = "ALT",
+			mods = "ALT|SHIFT",
 			action = act.ActivatePaneDirection("Down"),
 		},
 		{
@@ -138,6 +138,8 @@ M.keys = function()
 				flags = "FUZZY|WORKSPACES",
 			}),
 		},
+		{ key = ",", mods = "ALT", action = act.ActivateTabRelative(-1) },
+		{ key = ".", mods = "ALT", action = act.ActivateTabRelative(1) },
 		-- {
 		--   key = 's',
 		--   mods = 'ALT',
