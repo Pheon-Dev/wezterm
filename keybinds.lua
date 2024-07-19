@@ -1,7 +1,54 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
+local w = require("wezterm")
+local a = w.action
+
+local function is_inside_vim(pane)
+	local tty = pane:get_tty_name()
+	if tty == nil then
+		return false
+	end
+
+	local success, stdout, stderr = w.run_child_process({
+		"sh",
+		"-c",
+		"ps -o state= -o comm= -t"
+			.. w.shell_quote_arg(tty)
+			.. " | "
+			.. "grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|l?n?vim?x?)(diff)?$'",
+	})
+
+	return success
+end
+
+local function is_outside_vim(pane)
+	return not is_inside_vim(pane)
+end
+
+local function bind_if(cond, key, mods, action)
+	local function callback(win, pane)
+		if cond(pane) then
+			win:perform_action(action, pane)
+		else
+			win:perform_action(a.SendKey({ key = key, mods = mods }), pane)
+		end
+	end
+
+	return { key = key, mods = mods, action = w.action_callback(callback) }
+end
 
 local M = {}
+
+M.mod = "SHIFT|SUPER"
+
+M.smart_split = wezterm.action_callback(function(window, pane)
+	local dim = pane:get_dimensions()
+	if dim.pixel_height > dim.pixel_width then
+		window:perform_action(act.SplitVertical({ domain = "CurrentPaneDomain" }), pane)
+	else
+		window:perform_action(act.SplitHorizontal({ domain = "CurrentPaneDomain" }), pane)
+	end
+end)
 
 M.key_tables = function()
 	return {
@@ -58,6 +105,7 @@ M.keys = function()
 		},
 		{ key = "Tab", mods = "ALT", action = act.ActivateTabRelative(1) },
 		{ key = "Tab", mods = "ALT|SHIFT", action = act.ActivateTabRelative(-1) },
+		{ mods = M.mod, key = "Enter", action = M.smart_split },
 		{
 			key = "q",
 			mods = "ALT",
@@ -81,7 +129,7 @@ M.keys = function()
 		-- { key = 'w', mods = 'ALT', action = act.SpawnWindow },
 		{
 			key = "n",
-			mods = "ALT",
+			mods = "ALT|SHIFT",
 			action = act.SpawnTab("CurrentPaneDomain"),
 		},
 		{
@@ -94,26 +142,28 @@ M.keys = function()
 			mods = "ALT",
 			action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }),
 		},
-		{
+		bind_if(is_outside_vim, "h", "ALT", a.ActivatePaneDirection("Left")),
+		bind_if(is_outside_vim, "l", "ALT", a.ActivatePaneDirection("Right")),
+		--[[ {
 			key = "h",
-			mods = "ALT|SHIFT",
+			mods = "ALT",
 			action = act.ActivatePaneDirection("Left"),
 		},
 		{
 			key = "l",
-			mods = "ALT|SHIFT",
+			mods = "ALT",
 			action = act.ActivatePaneDirection("Right"),
 		},
 		{
 			key = "k",
-			mods = "ALT|SHIFT",
+			mods = "ALT",
 			action = act.ActivatePaneDirection("Up"),
 		},
 		{
 			key = "j",
-			mods = "ALT|SHIFT",
+			mods = "ALT",
 			action = act.ActivatePaneDirection("Down"),
-		},
+		}, ]]
 		{
 			key = "c",
 			mods = "CTRL|SHIFT",
