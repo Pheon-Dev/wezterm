@@ -136,7 +136,7 @@ config.audible_bell = "Disabled"
 
 config.launch_menu = {
 	{
-		args = { "f" },
+		args = { "top" },
 	},
 	{
 		-- Optional label to show in the launcher. If omitted, a label
