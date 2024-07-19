@@ -144,26 +144,8 @@ M.keys = function()
 		},
 		bind_if(is_outside_vim, "h", "ALT", a.ActivatePaneDirection("Left")),
 		bind_if(is_outside_vim, "l", "ALT", a.ActivatePaneDirection("Right")),
-		--[[ {
-			key = "h",
-			mods = "ALT",
-			action = act.ActivatePaneDirection("Left"),
-		},
-		{
-			key = "l",
-			mods = "ALT",
-			action = act.ActivatePaneDirection("Right"),
-		},
-		{
-			key = "k",
-			mods = "ALT",
-			action = act.ActivatePaneDirection("Up"),
-		},
-		{
-			key = "j",
-			mods = "ALT",
-			action = act.ActivatePaneDirection("Down"),
-		}, ]]
+		bind_if(is_outside_vim, "j", "ALT", a.ActivatePaneDirection("Down")),
+		bind_if(is_outside_vim, "k", "ALT", a.ActivatePaneDirection("Up")),
 		{
 			key = "c",
 			mods = "CTRL|SHIFT",
