@@ -172,6 +172,19 @@ M.keys = function()
 		},
 		{ key = ",", mods = "ALT", action = act.ActivateTabRelative(-1) },
 		{ key = ".", mods = "ALT", action = act.ActivateTabRelative(1) },
+		{
+			key = "j",
+			mods = "ALT|SHIFT",
+			action = act.RotatePanes("CounterClockwise"),
+		},
+		{ key = "k", mods = "ALT|SHIFT", action = act.RotatePanes("Clockwise") },
+		{
+			key = "h",
+			mods = "ALT|SHIFT",
+			action = act.PaneSelect({
+				mode = "SwapWithActive",
+			}),
+		},
 		-- {
 		--   key = 's',
 		--   mods = 'ALT',
