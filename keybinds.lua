@@ -81,7 +81,7 @@ M.keys = function()
 	return {
 		{
 			key = "r",
-			mods = "LEADER",
+			mods = "ALT",
 			action = act.ActivateKeyTable({
 				name = "resize_pane",
 				one_shot = false,
@@ -124,8 +124,8 @@ M.keys = function()
 		},
 		{ key = "-", mods = "CTRL", action = act.DecreaseFontSize },
 		{ key = "=", mods = "CTRL", action = act.IncreaseFontSize },
-		{ key = "t", mods = "ALT", action = act.ShowTabNavigator },
-		{ key = "p", mods = "ALT", action = act.ShowLauncher },
+		-- { key = "t", mods = "ALT", action = act.ShowTabNavigator },
+		-- { key = "p", mods = "ALT", action = act.ShowLauncher },
 		-- { key = 'w', mods = 'ALT', action = act.SpawnWindow },
 		{
 			key = "n",

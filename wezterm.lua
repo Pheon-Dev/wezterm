@@ -158,4 +158,5 @@ config.launch_menu = {
 		-- set_environment_variables = { FOO = "bar" },
 	},
 }
+
 return config
